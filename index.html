@@ -38,7 +38,6 @@
       overflow-x: hidden;
     }
 
-    /* Анимация проявления страницы */
     @keyframes fadeInUp {
       from {
         opacity: 0;
@@ -95,7 +94,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* Карточки категорий */
     .category {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -139,7 +137,6 @@
       transform: rotate(180deg);
     }
 
-    /* Плавный аккордеон */
     .category-content-wrapper {
       display: grid;
       grid-template-rows: 0fr;
@@ -178,32 +175,6 @@
     .category-inner b {
       color: var(--text-color);
     }
-
-    /* Кнопка действия */
-    .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      color: var(--accent-text);
-      border: none;
-      padding: 16px;
-      border-radius: var(--radius);
-      font-weight: 700;
-      font-size: 16px;
-      margin-top: 24px;
-      cursor: pointer;
-      box-shadow: 0 4px 20px var(--accent-glow);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      animation: fadeInUp 0.7s ease-out;
-    }
-
-    .btn:active {
-      transform: scale(0.96);
-      box-shadow: 0 2px 10px var(--accent-glow);
-    }
   </style>
 </head>
 <body>
@@ -211,7 +182,7 @@
   <header>
     <div class="status-badge">
       <span class="status-dot"></span>
-      Быстрый ремонт & Настройка
+      Быстрый ремонт & Настройка г.Белоозерск
     </div>
     <h1>🛠 Услуги и Направления</h1>
   </header>
@@ -303,20 +274,12 @@
     </div>
   </div>
 
-  <button class="btn" onclick="sendOrder()">
-    💬 Задать вопрос / Оформить заявку
-  </button>
-
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
     function toggleCategory(element) {
       element.classList.toggle('open');
-    }
-
-    function sendOrder() {
-      tg.sendData("action_request_help");
     }
   </script>
 </body>
