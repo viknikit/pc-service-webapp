@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Услуги по ремонту ПК и ПО</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg-color: var(--tg-theme-bg-color, #121214);
+      --text-color: var(--tg-theme-text-color, #f4f4f5);
+      --card-bg: var(--tg-theme-secondary-bg-color, #1e1e22);
+      --accent-color: var(--tg-theme-button-color, #3b82f6);
+      --accent-text: var(--tg-theme-button-text-color, #ffffff);
+      --border-color: #2e2e34;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-top: 0;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .category {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .category-title {
+      padding: 14px 16px;
+      font-weight: 600;
+      font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .category-content {
+      display: none;
+      padding: 0 16px 14px 16px;
+      border-top: 1px solid var(--border-color);
+      font-size: 14px;
+      line-height: 1.5;
+      color: #a1a1aa;
+    }
+
+    .category-content ul {
+      margin: 8px 0 0 0;
+      padding-left: 20px;
+    }
+
+    .category-content li {
+      margin-bottom: 6px;
+    }
+
+    .open .category-content {
+      display: block;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      background-color: var(--accent-color);
+      color: var(--accent-text);
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      margin-top: 20px;
+      cursor: pointer;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛠 Услуги и Прайс-лист</h1>
+
+  <div class="category" onclick="toggleCategory(this)">
+    <div class="category-title">
+      <span>💻 Установка & Настройка Windows</span>
+      <span>▼</span>
+    </div>
+    <div class="category-content">
+      <ul>
+        <li>Установка чистой Windows (любые версии: новые и старые).</li>
+        <li>Кастомные сборки (например, <b>23H2 by pybERTatn1k</b>).</li>
+        <li>Адаптация под задачи: Игровая, Офисная, Легковесная.</li>
+        <li>Оптимизация: вырезка телеметрии, ненужных служб и фоновых процессов.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="category" onclick="toggleCategory(this)">
+    <div class="category-title">
+      <span>🛠 Обслуживание ОС & Ошибки</span>
+      <span>▼</span>
+    </div>
+    <div class="category-content">
+      <ul>
+        <li>Устранение синих экранов (BSOD), зависаний и сбоев.</li>
+        <li>Настройка реестра, автозагрузки, служб Windows.</li>
+        <li>Чистка системы от вирусов, троянов и рекламных вредоносов.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="category" onclick="toggleCategory(this)">
+    <div class="category-title">
+      <span>📦 Установка ПО & Программ</span>
+      <span>▼</span>
+    </div>
+    <div class="category-content">
+      <ul>
+        <li>Подбор и установка софта под любые специальности (офис, дизайн, разработка, учеба).</li>
+        <li>Полная тонкая настройка приложений под клиента.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="category" onclick="toggleCategory(this)">
+    <div class="category-title">
+      <span>💾 Восстановление Данных</span>
+      <span>▼</span>
+    </div>
+    <div class="category-content">
+      <ul>
+        <li>Восстановление утерянных или удаленных файлов с флешек, HDD и SSD дисков.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="category" onclick="toggleCategory(this)">
+    <div class="category-title">
+      <span>📱 Ремонт Телефонов</span>
+      <span>▼</span>
+    </div>
+    <div class="category-content">
+      <ul>
+        <li>Замена комплектующих и деталей на смартфонах.</li>
+        <li><i>Примечание: детали и возможность ремонта уточняются отдельно под вашу модель.</i></li>
+      </ul>
+    </div>
+  </div>
+
+  <button class="btn" onclick="sendOrder()">Задать вопрос / Оформить заявку</button>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    function toggleCategory(element) {
+      element.classList.toggle('open');
+    }
+
+    function sendOrder() {
+      tg.sendData("action_request_help");
+    }
+  </script>
+</body>
+</html>
