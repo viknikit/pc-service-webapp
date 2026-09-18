@@ -2,163 +2,310 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Услуги по ремонту ПК и ПО</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-color: var(--tg-theme-bg-color, #121214);
-      --text-color: var(--tg-theme-text-color, #f4f4f5);
-      --card-bg: var(--tg-theme-secondary-bg-color, #1e1e22);
-      --accent-color: var(--tg-theme-button-color, #3b82f6);
-      --accent-text: var(--tg-theme-button-text-color, #ffffff);
-      --border-color: #2e2e34;
+      --bg-color: var(--tg-theme-bg-color, #0f172a);
+      --text-color: var(--tg-theme-text-color, #f8fafc);
+      --card-bg: var(--tg-theme-secondary-bg-color, rgba(30, 41, 59, 0.7));
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-color: var(--tg-theme-button-color, #38bdf8);
+      --accent-text: var(--tg-theme-button-text-color, #0f172a);
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --text-muted: #94a3b8;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg-color);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.05) 0px, transparent 50%);
+      background-attachment: fixed;
       color: var(--text-color);
-      margin: 0;
       padding: 16px;
-      box-sizing: border-box;
+      padding-bottom: 30px;
+      overflow-x: hidden;
+    }
+
+    /* Анимация проявления страницы */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulseDot {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(56, 189, 248, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+    }
+
+    header {
+      text-align: center;
+      margin-top: 8px;
+      margin-bottom: 20px;
+      animation: fadeInUp 0.5s ease-out;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent-color);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      margin-bottom: 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-color);
+      border-radius: 50%;
+      animation: pulseDot 2s infinite;
     }
 
     h1 {
-      font-size: 20px;
-      margin-top: 0;
-      margin-bottom: 16px;
-      text-align: center;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
+    /* Карточки категорий */
     .category {
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
       margin-bottom: 12px;
       overflow: hidden;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInUp 0.6s ease-out;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .category:active {
+      transform: scale(0.99);
+    }
+
+    .category.open {
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 0 20px var(--accent-glow);
     }
 
     .category-title {
-      padding: 14px 16px;
+      padding: 16px 18px;
       font-weight: 600;
       font-size: 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
+      user-select: none;
+    }
+
+    .arrow-icon {
+      font-size: 12px;
+      color: var(--accent-color);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .category.open .arrow-icon {
+      transform: rotate(180deg);
+    }
+
+    /* Плавный аккордеон */
+    .category-content-wrapper {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .category.open .category-content-wrapper {
+      grid-template-rows: 1fr;
     }
 
     .category-content {
-      display: none;
-      padding: 0 16px 14px 16px;
-      border-top: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    .category-inner {
+      padding: 0 18px 16px 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
       font-size: 14px;
-      line-height: 1.5;
-      color: #a1a1aa;
+      line-height: 1.6;
+      color: var(--text-muted);
     }
 
-    .category-content ul {
-      margin: 8px 0 0 0;
-      padding-left: 20px;
+    .category-inner ul {
+      margin-top: 10px;
+      padding-left: 18px;
     }
 
-    .category-content li {
-      margin-bottom: 6px;
+    .category-inner li {
+      margin-bottom: 8px;
     }
 
-    .open .category-content {
-      display: block;
+    .category-inner li::marker {
+      color: var(--accent-color);
     }
 
+    .category-inner b {
+      color: var(--text-color);
+    }
+
+    /* Кнопка действия */
     .btn {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       width: 100%;
-      background-color: var(--accent-color);
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
       color: var(--accent-text);
       border: none;
-      padding: 14px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 15px;
-      margin-top: 20px;
+      padding: 16px;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 16px;
+      margin-top: 24px;
       cursor: pointer;
-      text-align: center;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInUp 0.7s ease-out;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 2px 10px var(--accent-glow);
     }
   </style>
 </head>
 <body>
 
-  <h1>🛠 Услуги и Прайс-лист</h1>
+  <header>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      Быстрый ремонт & Настройка
+    </div>
+    <h1>🛠 Услуги и Направления</h1>
+  </header>
 
   <div class="category" onclick="toggleCategory(this)">
     <div class="category-title">
       <span>💻 Установка & Настройка Windows</span>
-      <span>▼</span>
+      <span class="arrow-icon">▼</span>
     </div>
-    <div class="category-content">
-      <ul>
-        <li>Установка чистой Windows (любые версии: новые и старые).</li>
-        <li>Кастомные сборки (например, <b>23H2 by pybERTatn1k</b>).</li>
-        <li>Адаптация под задачи: Игровая, Офисная, Легковесная.</li>
-        <li>Оптимизация: вырезка телеметрии, ненужных служб и фоновых процессов.</li>
-      </ul>
+    <div class="category-content-wrapper">
+      <div class="category-content">
+        <div class="category-inner">
+          <ul>
+            <li>Установка чистой Windows (новые и прошлые версии).</li>
+            <li>Кастомные сборки (например, <b>23H2 by pybERTatn1k</b>).</li>
+            <li>Адаптация под задачи: Игровая, Офисная, Легковесная.</li>
+            <li>Оптимизация: вырезка телеметрии, ненужных служб и фоновых процессов.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="category" onclick="toggleCategory(this)">
     <div class="category-title">
       <span>🛠 Обслуживание ОС & Ошибки</span>
-      <span>▼</span>
+      <span class="arrow-icon">▼</span>
     </div>
-    <div class="category-content">
-      <ul>
-        <li>Устранение синих экранов (BSOD), зависаний и сбоев.</li>
-        <li>Настройка реестра, автозагрузки, служб Windows.</li>
-        <li>Чистка системы от вирусов, троянов и рекламных вредоносов.</li>
-      </ul>
+    <div class="category-content-wrapper">
+      <div class="category-content">
+        <div class="category-inner">
+          <ul>
+            <li>Устранение синих экранов (BSOD), зависаний и сбоев.</li>
+            <li>Настройка реестра, автозагрузки, служб Windows.</li>
+            <li>Чистка системы от вирусов, троянов и рекламных вредоносов.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="category" onclick="toggleCategory(this)">
     <div class="category-title">
       <span>📦 Установка ПО & Программ</span>
-      <span>▼</span>
+      <span class="arrow-icon">▼</span>
     </div>
-    <div class="category-content">
-      <ul>
-        <li>Подбор и установка софта под любые специальности (офис, дизайн, разработка, учеба).</li>
-        <li>Полная тонкая настройка приложений под клиента.</li>
-      </ul>
+    <div class="category-content-wrapper">
+      <div class="category-content">
+        <div class="category-inner">
+          <ul>
+            <li>Подбор и установка софта под любые специальности (офис, дизайн, разработка, учеба).</li>
+            <li>Полная тонкая настройка приложений под клиента.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="category" onclick="toggleCategory(this)">
     <div class="category-title">
       <span>💾 Восстановление Данных</span>
-      <span>▼</span>
+      <span class="arrow-icon">▼</span>
     </div>
-    <div class="category-content">
-      <ul>
-        <li>Восстановление утерянных или удаленных файлов с флешек, HDD и SSD дисков.</li>
-      </ul>
+    <div class="category-content-wrapper">
+      <div class="category-content">
+        <div class="category-inner">
+          <ul>
+            <li>Восстановление утерянных или удаленных файлов с флешек, HDD и SSD дисков.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="category" onclick="toggleCategory(this)">
     <div class="category-title">
       <span>📱 Ремонт Телефонов</span>
-      <span>▼</span>
+      <span class="arrow-icon">▼</span>
     </div>
-    <div class="category-content">
-      <ul>
-        <li>Замена комплектующих и деталей на смартфонах.</li>
-        <li><i>Примечание: детали и возможность ремонта уточняются отдельно под вашу модель.</i></li>
-      </ul>
+    <div class="category-content-wrapper">
+      <div class="category-content">
+        <div class="category-inner">
+          <ul>
+            <li>Замена комплектующих и деталей на смартфонах.</li>
+            <li><i>Примечание: детали и возможность ремонта уточняются отдельно под вашу модель.</i></li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 
-  <button class="btn" onclick="sendOrder()">Задать вопрос / Оформить заявку</button>
+  <button class="btn" onclick="sendOrder()">
+    💬 Задать вопрос / Оформить заявку
+  </button>
 
   <script>
     const tg = window.Telegram.WebApp;
